@@ -48,6 +48,9 @@ const Login = () => {
 
         <form onSubmit={handleLogin}>
           <fieldset className="fieldset">
+            
+            
+            {/*Email */}
             <label className="label">Email</label>
             <input
               type="email"

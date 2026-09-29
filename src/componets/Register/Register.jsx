@@ -1,4 +1,8 @@
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../../firebase/firebase.init";
 import { FaEye, FaRegEyeSlash } from "react-icons/fa";
@@ -12,7 +16,9 @@ const Register = () => {
     const email = event.target.email.value;
     const password = event.target.password.value;
     const terms = event.target.terms.checked;
-    console.log("register clicked", email, password, terms);
+    const name = event.target.name.value;
+    const photo = event.target.photo.value;
+    console.log("register clicked", email, password, terms, name, photo);
 
     // const length6Patern = /^.{6,}$/;
     // const casePattern = /^(?=.*[A-Z])(?=.*[a-z]).+$/;
@@ -55,12 +61,23 @@ const Register = () => {
         console.log("after creation a new user", result.user);
         setSuccess(true);
         event.target.reset();
+
+        // update user profile
+        const profile = {
+          displayName: name,
+          photoURL: photo,
+        };
+        updateProfile(result.user, profile)
+          .then(() => {})
+          .catch();
         // send verification email
         sendEmailVerification(result.user)
           .then(() => {
-            alert("please login to your verify email and verify your email address")
+            alert(
+              "please login to your verify email and verify your email address",
+            );
           })
-        .catch()
+          .catch();
       })
       .catch((error) => {
         console.log("error happend", error.message);
@@ -82,12 +99,28 @@ const Register = () => {
           <div className="card-body">
             <form onSubmit={handleRegister}>
               <fieldset className="fieldset">
+                <label className="label">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  className="input"
+                  placeholder="Your Name"
+                />
+                {/* Your Name */}
                 <label className="label">Email</label>
                 <input
-                  type="email"
+                  type="text"
                   name="email"
                   className="input"
-                  placeholder="Email"
+                  placeholder="Your Email"
+                />
+                {/**Photo URL */}
+                <label className="label">Your Photo</label>
+                <input
+                  type="text"
+                  name="photo"
+                  className="input"
+                  placeholder="Your Photo URL"
                 />
                 <label className="label">Password</label>
                 <div className="relative">
@@ -124,7 +157,10 @@ const Register = () => {
               {error && <p className="text-red-500">{error}</p>}
             </form>
             <p>
-              All Ready have an account? <Link className="text-blue-400 underline" to="/login">Please Login</Link>
+              All Ready have an account?{" "}
+              <Link className="text-blue-400 underline" to="/login">
+                Please Login
+              </Link>
             </p>
           </div>
         </div>
